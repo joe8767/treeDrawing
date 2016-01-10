@@ -1,0 +1,111 @@
+from ete3 import Tree, TreeStyle, TextFace, NodeStyle
+import numpy as np
+
+trackResult = np.array([[1,0,2,0],
+                        [2,3,4,1],
+                        [3,3,4,1],
+                        [4,5,6,2],
+                        [5,5,6,2],
+                        [6,5,7,3],
+                        [7,5,7,3]], 
+                        dtype=np.int16)
+                        
+
+t = Tree( "((a,b),c);" )
+
+[rows, columns] = trackResult.shape
+
+root = Tree()
+node_cur = root
+
+'''#######################
+ Tree Style Begin
+'''
+ts = TreeStyle()
+ts.title.add_face(TextFace("Lineage Tree", fsize=8), column=0)
+ts.scale = 50
+ts.mode = 'r'
+
+# left or right
+ts.orientation = 1
+
+ts.rotation = 270
+ts.show_leaf_name = False
+ts.show_branch_length = True
+#ts.show_branch_length = True
+'''
+ Tree Style End
+#######################'''
+
+
+
+
+'''#######################
+ Node Style Begin
+'''
+ns_root = NodeStyle()
+ns_root["size"] = 10
+ns_root['fgcolor'] = "red"
+
+ns = NodeStyle()
+ns["size"] = 10
+#ns["hz_line_width"] = 1.5
+#ns["vt_line_width"] = 1.5
+
+'''
+ Node Style End
+#######################'''
+ 
+ 
+for r in xrange(rows):
+    cell_id = trackResult[r, 0]
+    time_begin = trackResult[r, 1]
+    time_end = trackResult[r, 2]
+    parent_id = trackResult[r, 3]
+    time_duration = np.abs(time_begin-time_end)
+    # for root
+    if parent_id == 0:
+        # Add name to root for the first iteration
+        root.add_feature("name", str(cell_id))
+        # change the branch length
+        root.add_feature("dist", time_duration)
+        #change node style
+        root.set_style(ns_root)
+        
+        # set node name to face
+        nameFace = TextFace(root.name)
+        nameFace.fgcolor = "white"
+        nameFace.fsize = 15
+#        nameFace.border.width = 1
+        nameFace.background.color = "green"
+        node_cur.add_face(nameFace, column=1, position="branch-bottom")
+    
+    else:  # for child
+        #### search the parent node by parent_id
+        node_cur = root.search_nodes(name=str(parent_id))
+        # there should be only one parent node
+        if len(node_cur) == 1:
+            #### set child with its id
+            node_cur = node_cur[0].add_child(name=str(cell_id))  
+            #### set duration
+            node_cur.add_feature("dist", time_duration)
+            
+            # set node style
+            node_cur.set_style(ns)
+            
+            # set node name to face
+            nameFace = TextFace(node_cur.name)
+            nameFace.fgcolor = "white"
+            nameFace.fsize = 15
+            nameFace.background.color = "green"
+            node_cur.add_face(nameFace, column=1, position="branch-bottom")
+        else:
+            raise RuntimeError("the cell id should be unique!")
+            
+        
+#node = root.search_nodes(name=str(5))
+#node[0].add_feature("dist", 1.5)
+    
+print root.get_ascii()
+
+root.show(tree_style=ts)
