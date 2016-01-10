@@ -1,15 +1,15 @@
 # Draw a tree from scratch
 
-## Feel free to change the struct.
+***
+ Feel free to change the struct.
+
+* TreeStyle -> appearance of Tree 
 
 
-TreeStyle -> appearance of Tree 
+* NodeStyle -> appearance of Node
 
 
-NodeStyle -> appearance of Node
+* TextFace -> text labels
 
+dependencies: [ete3](http://etetoolkit.org/ ) 
 
-TextFace -> text labels
-
-
-dependencies: ete3 
