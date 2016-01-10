@@ -11,7 +11,7 @@ treeStruct = np.array([[1,0,2,0],
                         dtype=np.int16)
                         
 
-#root = Tree( "((a,b),c);" )
+t = Tree( "((a,b),c);" )
 
 [rows, columns] = treeStruct.shape
 
@@ -22,7 +22,7 @@ node_cur = root
  Tree Style Begin
 '''
 ts = TreeStyle()
-ts.title.add_face(TextFace("Tree example", fsize=8), column=0)
+ts.title.add_face(TextFace("Lineage Tree", fsize=8), column=0)
 ts.scale = 50
 ts.mode = 'r'
 
